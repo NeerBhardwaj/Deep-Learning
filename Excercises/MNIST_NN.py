@@ -13,9 +13,7 @@ learning_rate = 0.001
 scheduler_step_size = 10
 scheduler_gamma = 0.1
 
-transforms=transforms.Compose([transforms.ToTensor(),
-                              transforms.Normalize((0.1307,), (0.3081,))])
-                                                  
+transforms=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
 
 train_dataset = torchvision.datasets.MNIST(root='./',
                                            train=True,
