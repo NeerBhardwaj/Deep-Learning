@@ -14,6 +14,7 @@ Created on Sat Sep 28 11:28:06 2019
 @author: neer
 """
 
+import pandas as pd
 import torch
 import torch.nn as nn
 import torchvision
@@ -46,6 +47,9 @@ test_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            batch_size=batch_size,
                                            shuffle=False)
 
+pd_kaggle_test = pd.read_csv('/test.csv')
+kaggle_test = 
+
 class NeuralNet(nn.Module):
     def __init__(self, input_size, hidden_size, num_classes):
         super(NeuralNet, self).__init__()
@@ -77,7 +81,7 @@ class NeuralNet(nn.Module):
         out = self.fc4(out)
  
         return out
-    
+
 model = NeuralNet(input_size, hidden_size, num_classes)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
@@ -121,4 +125,3 @@ for epoch in range(num_epochs):
     print ('Epoch {}, Time{:.4f}, Loss: {:.4f}, Train Accuarcy: {:.4f},Test Accuarcy :{:.4f}'
            .format(epoch, time.time()-start_time, loss.item(), train_accuracy, test_accuracy))
     torch.save(model.state_dict(), 'epoch-{}.ckpt'.format(epoch))
-

@@ -85,3 +85,5 @@ for epoch in range(num_epochs):
     print ('Epoch {}, Time{:.4f}, Loss: {:.4f}, Train Accuarcy: {:.4f},Test Accuarcy :{:.4f}'
            .format(epoch, time.time()-start_time, loss.item(), train_accuracy, test_accuracy))
     torch.save(model.state_dict(), 'epoch-{}.ckpt'.format(epoch))
+
+##Need to read p
