@@ -15,16 +15,18 @@ Created on Sat Sep 28 11:28:06 2019
 """
 
 import pandas as pd
+import numpy as np
 import torch
 import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 import time
+from torch.autograd import Variable
 
 input_size = 784
 hidden_size = 150
 num_classes = 10
-num_epochs = 10
+num_epochs = 20
 batch_size = 100
 learning_rate = 0.02
 scheduler_step_size = 10
@@ -47,8 +49,9 @@ test_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            batch_size=batch_size,
                                            shuffle=False)
 
-pd_kaggle_test = pd.read_csv('/test.csv')
-kaggle_test = 
+pd_kaggle_test = pd.read_csv('/Users/tokano/github/Deep-Learning/MNIST/test.csv').values/255.0 #normalized
+kaggle_test_set = Variable(torch.from_numpy(pd_kaggle_test)).float()
+
 
 class NeuralNet(nn.Module):
     def __init__(self, input_size, hidden_size, num_classes):
@@ -111,6 +114,7 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
     train_accuracy = correct/total
+
     with torch.no_grad():
         correct =0
         total = 0
@@ -125,3 +129,24 @@ for epoch in range(num_epochs):
     print ('Epoch {}, Time{:.4f}, Loss: {:.4f}, Train Accuarcy: {:.4f},Test Accuarcy :{:.4f}'
            .format(epoch, time.time()-start_time, loss.item(), train_accuracy, test_accuracy))
     torch.save(model.state_dict(), 'epoch-{}.ckpt'.format(epoch))
+
+# Predicted Labels will be stored here
+results = []
+
+# Set Evaluation Mode ON -> Turn Off Dropout
+model.eval() # Required for Evaluation/Test
+
+count = 0
+with torch.no_grad():
+    for image in kaggle_test_set:
+        image = image.reshape(-1,28*28)
+        output = model(image)
+        pred = torch.max(output.data, 1)[1]
+        results.append(pred[0].numpy())
+        count += 1
+
+results = np.array(results)
+results = pd.Series(results,name="Label")
+submission = pd.concat([pd.Series(range(1,28001),name = "ImageId"),results],axis = 1)
+submission.to_csv("submission.csv",index=False)
+submission.head()
